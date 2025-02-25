@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Playlist Links</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            color: #fff;
+            font-size: 28px;
+        }
+        input {
+            width: 60%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            padding: 12px 20px;
+            margin: 10px;
+            border: none;
+            background: #ff416c;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.3s ease-in-out;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background: #ff4b2b;
+            transform: scale(1.05);
+        }
+        #videoLinks {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            max-width: 800px;
+            margin: auto;
+            backdrop-filter: blur(10px);
+        }
+        a {
+            display: block;
+            color: #ff416c;
+            font-weight: bold;
+            text-decoration: none;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>YouTube Playlist Video Links</h2>
+    <input type="text" id="playlistUrl" placeholder="Enter YouTube Playlist URL">
+    <button onclick="fetchPlaylistVideos()">Fetch Links</button>
+    <button onclick="openAllVideos()">Open All Videos</button>
+    <div id="videoLinks"></div>
+    
+    <script>
+        let videoLinks = [];
+
+        async function fetchPlaylistVideos() {
+            let playlistUrl = document.getElementById("playlistUrl").value;
+            let playlistId = new URL(playlistUrl).searchParams.get("list");
+            
+            if (!playlistId) {
+                alert("Invalid Playlist URL");
+                return;
+            }
+            
+            let apiKey = "AIzaSyB9XdhCvioWXHT-6Q9MaOM61bhDsl99cVM"; // Replace with your YouTube Data API Key
+            let apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${apiKey}`;
+            
+            try {
+                let response = await fetch(apiUrl);
+                let data = await response.json();
+                let videoLinksDiv = document.getElementById("videoLinks");
+                videoLinksDiv.innerHTML = "";
+                videoLinks = [];
+                
+                if (data.items) {
+                    data.items.forEach(item => {
+                        let videoId = item.snippet.resourceId.videoId;
+                        let videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+                        videoLinks.push(videoUrl);
+                        
+                        let linkElement = document.createElement("a");
+                        linkElement.href = videoUrl;
+                        linkElement.target = "_blank";
+                        linkElement.textContent = videoUrl;
+                        videoLinksDiv.appendChild(linkElement);
+                        videoLinksDiv.appendChild(document.createElement("br"));
+                    });
+                } else {
+                    videoLinksDiv.innerHTML = "No videos found or invalid API key.";
+                }
+            } catch (error) {
+                console.error("Error fetching playlist data:", error);
+                alert("Failed to fetch playlist videos.");
+            }
+        }
+        
+        function openAllVideos() {
+            if (videoLinks.length === 0) {
+                alert("No videos to open. Fetch links first.");
+                return;
+            }
+            
+            let openNextVideo = (index) => {
+                if (index < videoLinks.length) {
+                    window.open(videoLinks[index], '_blank');
+                    setTimeout(() => openNextVideo(index + 1), 800); // 800ms delay to avoid popup blocker
+                }
+            };
+            
+            openNextVideo(0);
+        }
+    </script>
+</body>
+</html>

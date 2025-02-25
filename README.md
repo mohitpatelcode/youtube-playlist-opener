@@ -15,3 +15,4 @@ Copy a YouTube Playlist URL 🎵
 Paste it in the input box
 Click "Fetch Links" to get all videos
 Click "Open Video" to watch instantly!
+🚀 Live Demo: https://mohitpatelcode.github.io/youtube-playlist-opener/

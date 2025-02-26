@@ -87,7 +87,7 @@
             }
             
             let apiKey = "AIzaSyB9XdhCvioWXHT-6Q9MaOM61bhDsl99cVM"; // Replace with your YouTube Data API Key
-            let apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${apiKey}`;
+            let apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&playlistId=${playlistId}&key=${apiKey}`;
             
             try {
                 let response = await fetch(apiUrl);
